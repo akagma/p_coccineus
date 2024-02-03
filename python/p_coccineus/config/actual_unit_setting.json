@@ -1,0 +1,8 @@
+{
+  "unit_system": "METRIC",
+  "rotation_unit": "DEGREES",
+  "length_unit": "MILLIMETERS",
+  "mass_unit": "KILOGRAMS",
+  "time_unit": "SECONDS",
+  "temperature_unit": "CELSIUS"
+}
