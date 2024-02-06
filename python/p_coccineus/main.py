@@ -36,6 +36,56 @@ TemperatureUnit = Literal[
     "CELSIUS"
 ]
 
+FileFormat = Literal[
+    "BMP",
+    "IRIS",
+    "PNG",
+    "JPEG",
+    "JPEG2000",
+    "TARGA",
+    "TARGA_RAW",
+    "CINEON",
+    "DPX",
+    "OPEN_EXR_MULTILAYER",
+    "OPEN_EXR",
+    "HDR",
+    "TIFF",
+    "WEBP",
+    "AVI_JPEG",
+    "AVI_RAW",
+    "FFMPEG",
+]
+
+FFmpegEncoding = Literal[
+    "MPEG1",
+    "MPEG2",
+    "MPEG4",
+    "AVI",
+    "QUICKTIME",
+    "DV",
+    "OGG",
+    "MKV",
+    "FLASH",
+    "WEBM",
+]
+FFmpegVideoCodec = Literal[
+    "NONE",
+    "DNXHD",
+    "DV",
+    "FFV1",
+    "FLASH",
+    "H264",
+    "HUFFYUV",
+    "MPEG1",
+    "MPEG2",
+    "MPEG4",
+    "PNG",
+    "QTRLE",
+    "THEORA",
+    "WEBM",
+    "AV1",
+]
+
 
 class SceneUnitSetting(TypedDict):
     unit_system: Unit
@@ -59,11 +109,27 @@ class SceneUnitSettingValidationResult(TypedDict):
     temperature_unit: tuple[bool, TemperatureUnit, TemperatureUnit]
 
 
+class RenderSetting(TypedDict):
+    frame_start: int
+    frame_end: int
+    frame_step: int
+    output_dir: str
+    file_format: FileFormat
+
+
+class RenderSettingValidationResult(TypedDict):
+    frame_start: tuple[bool, int, int]
+    frame_end: tuple[bool, int, int]
+    frame_step: tuple[bool, int, int]
+    output_dir: tuple[bool, str, str]
+    file_format: tuple[bool, FileFormat, FileFormat]
+
+
 def this_dir() -> str:
     return os.path.normpath(os.path.abspath(os.path.dirname(__file__)))
 
 
-def validate_scene_unit(actual_setting: SceneUnitSetting) -> SceneUnitSettingValidationResult:
+def validate_scene_unit_setting(actual_setting: SceneUnitSetting) -> SceneUnitSettingValidationResult:
     _setting = bpy.data.scenes["Scene"].unit_settings
 
     scene_unit_setting = {
@@ -87,15 +153,44 @@ def validate_scene_unit(actual_setting: SceneUnitSetting) -> SceneUnitSettingVal
     }
 
 
+def validate_render_setting(actual_setting: RenderSetting) -> RenderSettingValidationResult:
+    _setting = bpy.data.scenes["Scene"]
+
+    render_setting = {
+        "frame_start": _setting.frame_start,
+        "frame_end": _setting.frame_end,
+        "frame_step": _setting.frame_step,
+        "output_dir": _setting.render.filepath,
+        "file_format": _setting.render.image_settings.file_format,
+    }
+
+    return {
+        _key: (
+            render_setting[_key] == _actual,
+            render_setting[_key],
+            _actual
+        )
+        for _key, _actual in actual_setting.items()
+    }
+
+
 def validate_scene_setting():
     unit_setting_file_path = os.path.join(this_dir(), "config", "actual_unit_setting.json")
     with open(unit_setting_file_path, "r", encoding="utf-8-sig") as fp:
         _setting = json.load(fp)
 
-    _result = validate_scene_unit(_setting)
-
     print("##### Validation result #####")
-    print("===== Unit setting =====")
-    for _unit, (_ok, _scene, _actual) in _result.items():
+
+    _result_scene_unit = validate_scene_unit_setting(_setting["scene_unit"])
+    print("===== Scene unit setting =====")
+    for _unit, (_ok, _scene, _actual) in _result_scene_unit.items():
+        ok = "OK" if _ok else "NG"
+        print(f"{_unit}\n{ok}\nscene: {_scene}\nactual: {_actual}\n")
+
+    print("")
+
+    _result_render = validate_render_setting(_setting["render"])
+    print("===== Render setting =====")
+    for _unit, (_ok, _scene, _actual) in _result_render.items():
         ok = "OK" if _ok else "NG"
         print(f"{_unit}\n{ok}\nscene: {_scene}\nactual: {_actual}\n")

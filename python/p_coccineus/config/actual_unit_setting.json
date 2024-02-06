@@ -1,10 +1,19 @@
 {
-  "unit_system": "METRIC",
-  "unit_scale_length": 1.0,
-  "use_separate_units": false,
-  "rotation_unit": "DEGREES",
-  "length_unit": "MILLIMETERS",
-  "mass_unit": "KILOGRAMS",
-  "time_unit": "SECONDS",
-  "temperature_unit": "CELSIUS"
+  "scene_unit": {
+    "unit_system": "METRIC",
+    "unit_scale_length": 1.0,
+    "use_separate_units": false,
+    "rotation_unit": "DEGREES",
+    "length_unit": "MILLIMETERS",
+    "mass_unit": "KILOGRAMS",
+    "time_unit": "SECONDS",
+    "temperature_unit": "CELSIUS"
+  },
+  "render": {
+    "frame_start": 1,
+    "frame_end": 250,
+    "frame_step": 1,
+    "output_dir": "/tmp\\",
+    "file_format": "FFMPEG"
+  }
 }
