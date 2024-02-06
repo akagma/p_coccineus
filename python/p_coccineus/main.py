@@ -39,6 +39,8 @@ TemperatureUnit = Literal[
 
 class SceneUnitSetting(TypedDict):
     unit_system: Unit
+    unit_scale_length: float
+    use_separate_units: bool
     rotation_unit: RotationUnit
     length_unit: LengthUnit
     mass_unit: MassUnit
@@ -48,6 +50,8 @@ class SceneUnitSetting(TypedDict):
 
 class SceneUnitSettingValidationResult(TypedDict):
     unit_system: tuple[bool, Unit, Unit]
+    unit_scale_length: tuple[bool, float, float]
+    use_separate_units: tuple[bool, bool, bool]
     rotation_unit: tuple[bool, RotationUnit, RotationUnit]
     length_unit: tuple[bool, LengthUnit, LengthUnit]
     mass_unit: tuple[bool, MassUnit, MassUnit]
@@ -64,6 +68,8 @@ def validate_scene_unit(actual_setting: SceneUnitSetting) -> SceneUnitSettingVal
 
     scene_unit_setting = {
         "unit_system": _setting.system,
+        "unit_scale_length": _setting.scale_length,
+        "use_separate_units": _setting.use_separate,
         "rotation_unit": _setting.system_rotation,
         "length_unit": _setting.length_unit,
         "mass_unit": _setting.mass_unit,

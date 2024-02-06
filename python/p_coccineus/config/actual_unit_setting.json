@@ -1,5 +1,7 @@
 {
   "unit_system": "METRIC",
+  "unit_scale_length": 1.0,
+  "use_separate_units": false,
   "rotation_unit": "DEGREES",
   "length_unit": "MILLIMETERS",
   "mass_unit": "KILOGRAMS",
